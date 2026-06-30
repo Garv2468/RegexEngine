@@ -2,28 +2,25 @@
 #include <iostream>
 #include <string>
 
-int pos;
-std:: string pattern;
-
-bool atEnd(){
+bool Tokenizer :: atEnd(){
     return pos >= pattern.size();
 }
 
-char peek(int offset){ // offset is how far you want to peek
+char Tokenizer ::peek(int offset){ // offset is how far you want to peek
     int p = pos + offset;
     return (p < pattern.size()) ? pattern[p] : '\0';
 }
 
-char consume() {
+char Tokenizer ::consume() {
     return pattern[pos++];
 }
 
-bool dollarIsAnchor(){
+bool Tokenizer ::dollarIsAnchor(){
     if (atEnd()) return true;                              
     return (pattern[pos] == '\\' && pos + 1 < pattern.size() && pattern[pos + 1] == ')');
 }
 
-Token handleEscape(int startPos) {
+Token Tokenizer ::handleEscape(int startPos) {
     char c = consume();
     switch (c) {
         case '(':
@@ -52,7 +49,7 @@ Token handleEscape(int startPos) {
     }
 }
 
-std::string BracketExpr(int startPos) {
+std::string Tokenizer ::BracketExpr(int startPos) {
     std::string raw = "[";
 
     if (!atEnd() && peek(0) == '^') {
@@ -73,7 +70,7 @@ std::string BracketExpr(int startPos) {
     return raw;
 }
 
-std::vector<Token> tokenize() {
+std::vector<Token> Tokenizer ::tokenize() {
     std::vector<Token> tokens;
 
     bool atStart = true;
@@ -155,7 +152,7 @@ const char* tokTypeStr(TokType t) {
 }
 
 int main(){
-    pattern = "^abc$d^[ab]$";
-    std::vector<Token> tokens = tokenize();
+    Tokenizer t("a\\(b$\\)c");
+    std::vector<Token> tokens = t.tokenize();
     for(auto x : tokens) std::cout << tokTypeStr(x.type) << "\n";
 }

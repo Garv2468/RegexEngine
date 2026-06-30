@@ -25,4 +25,18 @@ struct Token {
     int pos = 0;   
 };
 
-std::vector<Token> tokenize(const std::string& pattern);
+class Tokenizer{
+    private:
+    bool atEnd();
+    char peek(int offset);
+    char consume();
+    bool dollarIsAnchor();
+    Token handleEscape(int startPos);
+    std::string BracketExpr(int startPos);
+    std::string pattern;
+    int pos = 0;
+
+    public:
+    Tokenizer(const std :: string& pattern) : pattern(pattern){}
+    std::vector<Token> tokenize();
+};
