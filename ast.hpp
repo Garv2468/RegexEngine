@@ -53,7 +53,8 @@ struct GroupNode: public Node
 {
     int groupnum;
     std::unique_ptr<Node> inner;
-    GroupNode(std::unique_ptr<Node> c, int p, int n): Node(Nodekind::GROUP_NODE, p), inner(std::move(c)), groupnum(n) {}
+    bool anchorend;
+    GroupNode(std::unique_ptr<Node> c, int p, int n, bool aend): Node(Nodekind::GROUP_NODE, p), inner(std::move(c)), groupnum(n), anchorend(aend) {}
 };
 
 struct SquarebrackNode: public Node

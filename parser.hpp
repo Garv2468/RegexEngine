@@ -5,7 +5,7 @@
 
 class Parser{
     private:
-    int pos;
+    int pos=0;
     int groupcount = 0;
     std::vector<Token> tokens;
     std::unique_ptr<Node> parseAtom();

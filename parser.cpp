@@ -23,8 +23,10 @@ std::unique_ptr<Node> Parser :: parseAtom(){
         int gnum = ++groupcount;
         pos++;
         std::unique_ptr<Node> res = parseSequence();
+        bool aend = false;
+        if(tokens[pos].type == TokType::ANCHOR_END) {pos++; aend = true;}
         pos++;
-        return std::make_unique<GroupNode>(std::move(res), startpos, gnum);
+        return std::make_unique<GroupNode>(std::move(res), startpos, gnum, aend);
     }
 
     else if(tokens[pos].type == TokType::SQUARE_BRACK){
