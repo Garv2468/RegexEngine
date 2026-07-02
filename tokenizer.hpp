@@ -40,3 +40,5 @@ class Tokenizer{
     Tokenizer(const std :: string& pattern) : pattern(pattern){}
     std::vector<Token> tokenize();
 };
+
+const char* tokTypeStr(TokType t);

@@ -25,7 +25,6 @@ Token Tokenizer ::handleEscape(int startPos) {
     switch (c) {
         case '(':
             return {TokType::LBRACK, '\0', {}, startPos};
-
         case ')':
             return {TokType::RBRACK, '\0', {}, startPos};
 
@@ -151,8 +150,3 @@ const char* tokTypeStr(TokType t) {
     return "0";
 }
 
-int main(){
-    Tokenizer t("a\\(b$\\)c");
-    std::vector<Token> tokens = t.tokenize();
-    for(auto x : tokens) std::cout << tokTypeStr(x.type) << "\n";
-}
