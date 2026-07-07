@@ -54,9 +54,15 @@ Fragment NFA::buildStar(StarNode* s){//
     Edge e;
     Fragment res;
     e.to = start;
+    Node* ptr = s->op.get();
+    //e.label = ptr.
     //e.label = s->op;
     start->edges.push_back(e);
     res.end = start;
     res.start = start;
     return res;
+}
+
+Fragment NFA::buildBackref(BackrefNode* bf){
+
 }
