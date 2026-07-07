@@ -3,8 +3,8 @@
 
 struct Edge{
     char label;
-    bool epsilon;
-    bool any;
+    bool epsilon = false;
+    bool any = false;
     State* to;
 };
 
