@@ -42,7 +42,6 @@ Fragment NFA::buildDot(DotNode* d){//
     Fragment res;
     e.to = end;
     e.any = true;
-    e.epsilon = true;
     start->edges.push_back(e);
     res.end = end;
     res.start = start;
@@ -50,19 +49,72 @@ Fragment NFA::buildDot(DotNode* d){//
 }
 
 Fragment NFA::buildStar(StarNode* s){//
-    State* start = makeState();
-    Edge e;
+    State* end = makeState();
+    Edge e2; Edge e3; Edge e4;
+    Fragment child = build(s->op.get());
     Fragment res;
-    e.to = start;
-    Node* ptr = s->op.get();
-    //e.label = ptr.
-    //e.label = s->op;
-    start->edges.push_back(e);
-    res.end = start;
-    res.start = start;
+
+    e2.to = end;
+    e2.epsilon = true;
+
+    child.start->edges.push_back(e2); 
+
+    e3.to = end;
+    e3.epsilon = true;
+
+    child.end->edges.push_back(e3);
+
+    e4.to = child.start;
+    e4.epsilon = true;
+
+    child.end->edges.push_back(e4);
+
+    res.end = end;
+    res.start = child.start;
+    return res;
+}
+
+Fragment NFA::buildConcat(ConcatNode* c){
+    Fragment res;
+    res = build(c->parts[0].get());
+    for(int i = 1; i < int(c->parts.size()); i++){
+        Fragment child = build(c->parts[i].get());
+        Edge e;
+        e.to = child.start;
+        e.epsilon = true;
+        res.end->edges.push_back(e);
+        res.end = child.end;
+    }
     return res;
 }
 
 Fragment NFA::buildBackref(BackrefNode* bf){
+    State* start = makeState(); State* end = makeState();
+    Edge e;
+    Fragment res;
+    e.to = end;
+    e.backrefGroup = bf->num;
+    start->edges.push_back(e);
+    res.end = end;
+    res.start = start;
+    return res;
+}
 
+Fragment NFA::buildGroup(GroupNode* g){
+    Fragment inner = build(g->inner.get());
+    groupBoundaries[g->groupnum] = {inner.start, inner.end};
+    return inner;
+}
+
+Fragment NFA::buildBracket(SquarebrackNode* s){//
+    State* start = makeState(); State* end = makeState();
+    Edge e;
+    Fragment res;
+    e.to = end;
+    for(auto i : s->str) e.charset.insert(i);
+    e.negate = s->neg;
+    start->edges.push_back(e);
+    res.end = end;
+    res.start = start;
+    return res;
 }

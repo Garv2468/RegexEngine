@@ -49,19 +49,20 @@ struct BackrefNode: public Node
     BackrefNode(int n, int p): Node(Nodekind::BACKREF_NODE, p), num(n) {}
 };
 
-struct GroupNode: public Node
-{
+struct GroupNode: public Node {
     int groupnum;
     std::unique_ptr<Node> inner;
     bool anchorend;
-    GroupNode(std::unique_ptr<Node> c, int p, int n, bool aend): Node(Nodekind::GROUP_NODE, p), inner(std::move(c)), groupnum(n), anchorend(aend) {}
+    GroupNode(std::unique_ptr<Node> c, int p, int n, bool aend)
+        : Node(Nodekind::GROUP_NODE, p), groupnum(n), inner(std::move(c)), anchorend(aend) {}
 };
 
 struct SquarebrackNode: public Node
 {
     std::vector<char> str;
     bool neg;
-    SquarebrackNode(std::vector<char> s, int p, bool n): Node(Nodekind::SQUARE_BRACK_NODE, p), neg(n), str(std::move(s)) {}
+    SquarebrackNode(std::vector<char> s, int p, bool n)
+        : Node(Nodekind::SQUARE_BRACK_NODE, p), str(std::move(s)), neg(n) {}
 };
 
 struct ConcatNode : public Node {

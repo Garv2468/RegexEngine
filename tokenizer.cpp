@@ -3,12 +3,12 @@
 #include <string>
 
 bool Tokenizer :: atEnd(){
-    return pos >= pattern.size();
+    return pos >= (int)pattern.size();
 }
 
 char Tokenizer ::peek(int offset){ // offset is how far you want to peek
     int p = pos + offset;
-    return (p < pattern.size()) ? pattern[p] : '\0';
+    return (p < (int)pattern.size()) ? pattern[p] : '\0';
 }
 
 char Tokenizer ::consume() {
@@ -17,7 +17,7 @@ char Tokenizer ::consume() {
 
 bool Tokenizer ::dollarIsAnchor(){
     if (atEnd()) return true;                              
-    return (pattern[pos] == '\\' && pos + 1 < pattern.size() && pattern[pos + 1] == ')');
+    return (pattern[pos] == '\\' && pos + 1 < (int)pattern.size() && pattern[pos + 1] == ')');
 }
 
 Token Tokenizer ::handleEscape(int startPos) {

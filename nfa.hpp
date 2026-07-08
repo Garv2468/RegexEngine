@@ -1,10 +1,17 @@
 #include <vector>
 #include "ast.hpp"
+#include <unordered_map>
+#include <unordered_set>
+
+struct State;
 
 struct Edge{
     char label;
     bool epsilon = false;
     bool any = false;
+    int backrefGroup = -1;
+    bool negate = false;
+    std::unordered_set<char> charset;
     State* to;
 };
 
@@ -32,4 +39,6 @@ class NFA{
 
     public:
     Fragment build(Node*);
+    std::unordered_map<int, std::pair<State*, State*>> groupBoundaries;
 };
+

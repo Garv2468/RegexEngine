@@ -1,5 +1,8 @@
 #include <iostream>
 #include "parser.hpp"
+#include <queue>
+#include <unordered_map>
+#include "nfa.hpp"
 
 void printTree(Node* node, int indent = 0){
     std::string pad(indent, ' ');
@@ -34,11 +37,63 @@ void printTree(Node* node, int indent = 0){
     }
 }
 
+void describeEdge(const Edge& e) {
+    if (e.epsilon) { std::cout << "epsilon"; return; }
+    if (e.any) { std::cout << "any (.)"; return; }
+    if (e.backrefGroup != -1) { std::cout << "backref \\" << e.backrefGroup; return; }
+    if (!e.charset.empty()) {
+        std::cout << (e.negate ? "bracket [^" : "bracket [");
+        for (char c : e.charset) std::cout << c;
+        std::cout << "]";
+        return;
+    }
+    std::cout << "literal '" << e.label << "'";
+}
+
+void printNFA(Fragment frag) {
+    std::unordered_map<State*, int> ids;
+    std::queue<State*> q;
+    q.push(frag.start);
+    ids[frag.start] = 0;
+    int nextId = 1;
+
+    std::vector<State*> order;
+    while (!q.empty()) {
+        State* cur = q.front(); q.pop();
+        order.push_back(cur);
+        for (auto& e : cur->edges) {
+            if (!ids.count(e.to)) {
+                ids[e.to] = nextId++;
+                q.push(e.to);
+            }
+        }
+    }
+
+    for (State* s : order) {
+        std::cout << "S" << ids[s] << (s == frag.end ? " (END)" : "") << ":\n";
+        for (auto& e : s->edges) {
+            std::cout << "  --[";
+            describeEdge(e);
+            std::cout << "]--> S" << ids[e.to] << "\n";
+        }
+    }
+    std::cout << "Total states reachable: " << order.size() << "\n";
+}
+
 int main(){
-    Tokenizer t("^agdkj[dfd][fd*]\\(b$\\)\\(asj\\(ABA\\)fk\\)c");
+    Tokenizer t("a\\(12\\)\\1");
     std::vector<Token> tokens = t.tokenize();
     //for(auto x : tokens) std::cout << tokTypeStr(x.type) << "\n";
     Parser p(tokens);
     ParseResult res = p.parse();
     printTree(res.root.get());
+    NFA nfa;
+    Fragment frag = nfa.build(res.root.get());
+    printNFA(frag);
+
+    if (!nfa.groupBoundaries.empty()) {
+        std::cout << "Group boundaries recorded:\n";
+        for (auto& [num, pair] : nfa.groupBoundaries)
+            std::cout << "  group " << num << ": start/end states recorded\n";
+    }
 }

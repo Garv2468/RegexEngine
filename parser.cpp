@@ -3,7 +3,7 @@
 #include "tokenizer.hpp"
 
 std::unique_ptr<Node> Parser :: parseAtom(){
-    if(pos >= tokens.size()) return nullptr;
+    if(pos >= (int)tokens.size()) return nullptr;
 
     else if(tokens[pos].type == TokType::LITERAL){
         int startpos = tokens[pos].pos;
@@ -73,7 +73,7 @@ std::unique_ptr<Node> Parser::parseSequence(){
         parts.push_back(std::move(piece));
     }
 
-    if(parts.size() == 1) return std::move(parts[0]);
+    if((int)parts.size() == 1) return std::move(parts[0]);
     return std::make_unique<ConcatNode>(std::move(parts), startpos);
 }
 
